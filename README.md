@@ -1,6 +1,6 @@
 # python-sdk
 
-Interact with fQR Weave platform using a python package
+Interact with fQR Weave platform using a python <a href="https://pypi.org/project/fqrweaveSDK/0.0.1/">package</a>
 
 <h1>Installation</h1>
 
