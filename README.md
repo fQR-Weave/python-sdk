@@ -2,7 +2,7 @@
 
 Interact with fQR Weave platform using a python package
 
-#Installation
+<h1>Installation</h1>
 
 In your terminal: <br>
 `pip install fqrweaveSDK`
