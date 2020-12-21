@@ -5,7 +5,8 @@ Interact with fQR Weave platform using a python <a href="https://pypi.org/projec
 <h1>Installation</h1>
 
 In your terminal: <br>
-`pip install fqrweaveSDK`
+
+`pip install fqrweaveSDK` or `pip install git+https://github.com/fQR-Weave/python-sdk.git`
 
 <h2>Connect your wallet:</h2>
 
@@ -55,7 +56,7 @@ On your end, add the repository files in a directory/folder according to the fol
         ----------------------- README.md (optional)
          
 ```
-<h3>Edit setup.py </h3>
+<h3>2) Edit setup.py </h3>
 
 To publish your own package, you have to edit `setup.py` :
 
