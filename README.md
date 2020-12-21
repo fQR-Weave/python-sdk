@@ -8,7 +8,13 @@ In your terminal: <br>
 `pip install fqrweaveSDK`
 <h2>Connect your wallet:</h2>
 
-`from fqrweaveSDK import Fqrweave, Tools` <br>
-`jwk_path = '/path/to/your/file.json'` <br>
-`connect = Fqrweave(jwk_path)` <br>
-`connect.login()` <br>
+
+```
+  from fqrweaveSDK import Fqrweave, Tools
+  
+  jwk_path = '/path/to/your/file.json'
+  connect = Fqrweave(jwk_path)
+  connect.login() # to keep your keyfile path connected in the current instance
+  
+```
+
