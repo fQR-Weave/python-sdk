@@ -51,5 +51,50 @@ On your end, add the repository files in a directory/folder according to the fol
         |---------------setup.cfg
         |
         ---------------------LICENSE.txt
+        |
+        ----------------------- README.md (optional)
          
 ```
+<h3>Edit setup.py </h3>
+
+To publish your own package, you have to edit `setup.py` :
+
+```
+  from distutils.core import setup
+
+  setup(
+    name="AS SAME AS YOU RE-NAMED fqrweaveSDK",
+    packages=["AS SAME AS name"],
+    version="0.0.1",
+    description="...",
+    url="https://github.com/fQR-Weave/fqrweaveSDK",
+    author="...",
+    author_email="xyz@gmail.com",
+    license="MIT",
+    classifiers=[
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
+
+    ],
+
+    include_package_data=True,
+    install_requires=[
+        "arweave-python-client" # external libraries required to run the sdk. more libraries
+                                # to be added within the next releases
+    ]
+)
+```
+<h3>3) Upload your package to Pypi</h3>
+
+Requirements:
+
+`pip install twine `
+
+Open the terminal in `yourFolder` then tap the following commands:
+
+```
+  >>> python setup.py sdist
+  >>> twine upload dist/*
+```
+
+You can then find your package at https://pypi.org/project/YOURPACKAGENAME/ 
