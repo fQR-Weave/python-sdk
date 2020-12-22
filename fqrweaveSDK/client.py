@@ -1,5 +1,8 @@
 import arweave
 import requests
+import os, sys
+import qrcode
+from bs4 import BeautifulSoup as BS
 
 
 KEYFILE_PATH = '/path/to/keyfile.json'
@@ -89,10 +92,71 @@ class Tools(object):
         #decode from bytestr to ascii, then split it
         #into a list
         return len((str(last_tx.data, 'utf8')).split(' '))
+                
+        # __version=0.0.2__
+    def batch_generator(self, instance, data_list, dir_name):
+        self.instance = instance
+        self.data_list = data_list
+
+        path = os.path.join(sys.path[0], dir_name)
+
+        _html_1 = '<html>' + '<head></head>' + \
+                  '<body> <center><h1>verified fQR</h1> </center>' + \
+                  '< br > < br > < center > < div > < table > < tr > < th > Data < / th > < th > info < / th > < / tr >'
+
+        _html_2 = '</table></div></body></html>'
 
 
+        if self.instance.startswith('https://'):
+            url = self.instance
+        else:
+            url = f"https://arweave.net/{self.instance}"
+
+        re = requests.get(url)
+        html = BS(re.text, features="lxml")
+        labels = html.find_all('label')
+
+        product_metadata = []  # store all generator instance metadata
+        table_data = []
+        html_table = []
+
+        for element in labels:
+            clean_1 = str(element).replace('<label for="product">', '')
+            clean_2 = str(clean_1).replace('</label>', '')
+            clean_3 = clean_2.split(':')
+            clean_4 = clean_3[0]
+            product_metadata.append(clean_4)
+
+        if len(self.data_list) != len(product_metadata):
+            return 'unmatched arguments'
+        else:
+            for entry in range(len(self.data_list)):
+                entry_data = [product_metadata[entry - 1], self.data_list[entry - 1]]
+                table_data.append(entry_data)
 
 
+        for tb in table_data:
+            table_el = f'<tr><td>{tb[0]}</td><td>{tb[1]}</td></tr>'
+            html_table.append(table_el)
 
+        fqr_html = _html_1 + ''.join(html_table) + _html_2
+        modified_html = (fqr_html.replace(' ', ''))
 
+        transaction = arweave.Transaction(self.wallet, data=modified_html)
+        transaction.add_tag('Content-Type', 'text/html')
+        transaction.sign()
+        transaction.send()
 
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_H,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(transaction.id)
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="black", back_color="white")
+        img.save(f'{path}\\{transaction.id}.png')
+
+        return transaction.id
