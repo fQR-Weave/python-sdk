@@ -1,16 +1,12 @@
 from distutils.core import setup
 
 
-
-
-
-
 setup(
     name="fqrweaveSDK",
     packages=["fqrweaveSDK"],
-    version="0.0.1",
+    version="0.0.2",
     description="SDK to interact with fQR Weave platform",
-    url="https://github.com/fQR-Weave/arweaveSDK",
+    url="https://github.com/fQR-Weave/python-sdk",
     author="wojak-frog",
     author_email="fqrweave@gmail.com",
     license="MIT",
@@ -22,6 +18,6 @@ setup(
 
     include_package_data=True,
     install_requires=[
-        "arweave-python-client"
+        "arweave-python-client", "bs4", "qrcode"
     ]
 )
