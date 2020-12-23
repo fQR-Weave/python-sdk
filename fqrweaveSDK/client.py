@@ -93,8 +93,28 @@ class Tools(object):
         #into a list
         return len((str(last_tx.data, 'utf8')).split(' '))
                 
-        # __version=0.0.2__
+        # __version="0.0.2"__
     def batch_generator(self, instance, data_list, dir_name):
+        """
+        this function scrap generator's instance to extract 
+        <label>.value text , which represent fQR metadata.
+        
+        Then the second parameter contains an array of
+        value to be passed to each label. 
+        
+        After that a data tx is submitted to the blockweave
+        with a pre_defined HTML template: _html_1 & _html_2
+        and a tag('Content Type', 'text/html') to make the browser
+        read the data as html
+        
+        transaction.id is encoded to a QR code and saved as .png
+        file in dir_name
+       
+        :param instance: custom generator instance url
+        :param data_list: labels entries 
+        :param dir_name: path to directory to save the QRs.png
+        :return:QR.png transaction's ID
+        """
         self.instance = instance
         self.data_list = data_list
 
