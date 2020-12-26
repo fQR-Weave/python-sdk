@@ -4,7 +4,7 @@ from distutils.core import setup
 setup(
     name="fqrweaveSDK",
     packages=["fqrweaveSDK"],
-    version="0.0.3",
+    version="0.0.4",
     description="SDK to interact with fQR Weave platform",
     url="https://github.com/fQR-Weave/python-sdk",
     author="wojak-frog",
