@@ -277,4 +277,3 @@ class Generator(object):
             path = os.path.join(sys.path[0], dir_path)
             img = qr.make_image(fill_color="black", back_color="white")
             img.save(f'{path}\\{transaction.id}.png')
-            return transaction.id
