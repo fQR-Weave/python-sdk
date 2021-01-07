@@ -5,6 +5,7 @@ import sys
 import qrcode
 from bs4 import BeautifulSoup as BS
 import pandas as pd
+import matplotlib.pyplot as plt
 
 
 KEYFILE_PATH = '/path/to/keyfile.json'
@@ -279,3 +280,147 @@ class Generator(object):
             img.save(f'{path}\\{transaction.id}.png')
          
         return None
+    
+class DynamicStats(object):   #__version__== 0.0.5
+
+    def __init__(self, api_key):
+        """
+        OPTION 1:
+        Using cutt.ly as third party
+        shortner and analytics provider
+        
+        
+        :param api_key: cutt.ly api key
+        """
+        self.api_key = api_key
+
+    def scans_count(self, tx_id):
+        """
+
+
+        :param tx_id: tx2 ID
+        :return: clicks count
+        """
+        r = requests.get(
+            f'https://cutt.ly/api/api.php?key={self.api_key}&stats=https://cutt.ly/{tx_id}')
+        clicks = json.loads(r.text)["stats"]["clicks"]
+        return int(clicks)
+
+    def get_date(self, tx_id):
+        """
+
+        :param tx_id:
+        :return:
+        """
+
+        r = requests.get(
+            f'https://cutt.ly/api/api.php?key={self.api_key}&stats=https://cutt.ly/{tx_id}')
+        date = json.loads(r.text)["stats"]["date"]
+        return date
+
+    def get_browsers(self, tx_id):
+        """
+
+        :param tx_id:
+        :return:
+        """
+
+        r = requests.get(
+           f'https://cutt.ly/api/api.php?key={self.api_key}&stats=https://cutt.ly/{tx_id}')
+        browsers = json.loads(r.text)["stats"]["devices"]["bro"]
+        kv_list = []
+
+        labels = list(browsers['0'].keys())
+        kv_list.append(labels)
+
+        for browser in browsers:
+            v = (list(browsers[browser].values()))
+            kv_list.append(v)
+        return kv_list
+
+    def plot_browsers(self, tx_id):
+        """
+
+        :param tx_id:
+        :return:
+        """
+        data = DynamicStats(self.api_key).get_browsers(tx_id)
+        labels = data.pop(0)
+        browsers = []
+        clicks = []
+        for browser in data:
+            browsers.append(browser[0])
+            clicks.append(int(browser[1]))
+
+        plt.bar(browsers, clicks, color='purple', width=0.5)
+        plt.title("Browsers Used In The Scan")
+        plt.xlabel("Browsers")
+        plt.ylabel("Scans")
+        plt.show()
+
+        return None
+
+    def get_countries(self, tx_id):
+        """
+
+        :param tx_id:
+        :return:
+        """
+
+        r = requests.get(
+           f'https://cutt.ly/api/api.php?key={self.api_key}&stats=https://cutt.ly/{tx_id}')
+        browsers = json.loads(r.text)["stats"]["devices"]["geo"]
+        print(json.loads(r.text)["stats"])
+        kv_list = []
+
+        labels = list(browsers['0'].keys())
+        kv_list.append(labels)
+
+        for browser in browsers:
+            v = (list(browsers[browser].values()))
+            kv_list.append(v)
+        return kv_list
+
+    def plot_countries(self, tx_id):
+        """
+
+        :param tx_id:
+        :return:
+        """
+        data = DynamicStats(self.api_key).get_countries(tx_id)
+        labels = data.pop(0)
+        countries = []
+        clicks = []
+        for country in data:
+            countries.append(country[0])
+            clicks.append(int(country[1]))
+
+
+        plt.bar(countries, clicks, color='purple', width=0.5)
+        plt.title('scan per country')
+        plt.xlabel('country')
+        plt.ylabel('scans')
+        plt.show()
+
+        return None
+
+    def get_devices(self, tx_id):
+        """
+
+        :param tx_id:
+        :return:
+        """
+
+        r = requests.get(
+           f'https://cutt.ly/api/api.php?key={self.api_key}&stats=https://cutt.ly/{tx_id}')
+        devices = json.loads(r.text)["stats"]["devices"]["dev"]
+        print(json.loads(r.text)["stats"])
+        kv_list = []
+
+        labels = list(devices['0'].keys())
+        kv_list.append(labels)
+
+        for device in devices: 
+            v = (list(devices[device].values()))
+            kv_list.append(v)
+        return kv_list
