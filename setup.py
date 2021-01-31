@@ -4,7 +4,7 @@ from distutils.core import setup
 setup(
     name="fqrweaveSDK",
     packages=["fqrweaveSDK"],
-    version="0.0.4",
+    version="0.0.5",
     description="SDK to interact with fQR Weave platform",
     url="https://github.com/fQR-Weave/python-sdk",
     author="wojak-frog",
@@ -18,6 +18,6 @@ setup(
 
     include_package_data=True,
     install_requires=[
-        "arweave-python-client", "bs4", "qrcode", "pandas"
+        "arweave-python-client", "bs4", "qrcode", "pandas", "matplotlib"
     ]
 )
