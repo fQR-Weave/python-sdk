@@ -1,2 +1,2 @@
-__version__ = "0.0.4"
-from fqrweaveSDK.client import Fqrweave, Tools, Generator
+__version__ = "0.0.5"
+from fqrweaveSDK.client import Fqrweave, Tools, Generator, DynamicStats
