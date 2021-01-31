@@ -5,6 +5,7 @@ import sys
 import qrcode
 from bs4 import BeautifulSoup as BS
 import pandas as pd
+import json
 import matplotlib.pyplot as plt
 
 
@@ -278,21 +279,58 @@ class Generator(object):
             path = os.path.join(sys.path[0], dir_path)
             img = qr.make_image(fill_color="black", back_color="white")
             img.save(f'{path}\\{transaction.id}.png')
-         
+
         return None
-    
-class DynamicStats(object):   #__version__== 0.0.5
+
+
+class DynamicStats(object):  # __version__== 0.0.5
 
     def __init__(self, api_key):
         """
         OPTION 1:
         Using cutt.ly as third party
         shortner and analytics provider
-        
-        
+
+
         :param api_key: cutt.ly api key
         """
         self.api_key = api_key
+        self.wallet = connect(KEYFILE_PATH)
+
+    def generate_dfqr(self, instance, metadata, dir):
+
+        fqr_1 = Generator().batch_generator(instance=instance, data_list=metadata, dir_name=dir)
+
+        short_url = f"https://cutt.ly/api/api.php?key={self.api_key}&short=https://arweave.net/{fqr_1}&name={fqr_1}"
+        data = requests.get(short_url).json()["url"]
+
+
+        fqr2_html = '<html><head></head>' + \
+                    '<body><center><h1>Dynamic fQR</h1></center><br><br><center>' + \
+                    f'<center><br><br><br><script>window.location.replace("{data["shortLink"]}")</script></center></body></html>'
+
+        html = ''.join(fqr2_html)
+
+        # post tx_2
+        tx = arweave.Transaction(self.wallet, data=html)
+        tx.add_tag('Content-Type', 'text/html')
+        tx.sign()
+        tx.send()
+
+        # generate QR code for tx_2 (redirection page)
+        qr = qrcode.QRCode(
+            version=3,
+            error_correction=qrcode.constants.ERROR_CORRECT_H,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(tx.id)
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="purple", back_color="white")
+        img.save(f'{dir}\\DFQR@{tx.id}.png')
+
+        return tx.id
 
     def scans_count(self, tx_id):
         """
@@ -326,7 +364,7 @@ class DynamicStats(object):   #__version__== 0.0.5
         """
 
         r = requests.get(
-           f'https://cutt.ly/api/api.php?key={self.api_key}&stats=https://cutt.ly/{tx_id}')
+            f'https://cutt.ly/api/api.php?key={self.api_key}&stats=https://cutt.ly/{tx_id}')
         browsers = json.loads(r.text)["stats"]["devices"]["bro"]
         kv_list = []
 
@@ -368,7 +406,7 @@ class DynamicStats(object):   #__version__== 0.0.5
         """
 
         r = requests.get(
-           f'https://cutt.ly/api/api.php?key={self.api_key}&stats=https://cutt.ly/{tx_id}')
+            f'https://cutt.ly/api/api.php?key={self.api_key}&stats=https://cutt.ly/{tx_id}')
         browsers = json.loads(r.text)["stats"]["devices"]["geo"]
         print(json.loads(r.text)["stats"])
         kv_list = []
@@ -395,7 +433,6 @@ class DynamicStats(object):   #__version__== 0.0.5
             countries.append(country[0])
             clicks.append(int(country[1]))
 
-
         plt.bar(countries, clicks, color='purple', width=0.5)
         plt.title('scan per country')
         plt.xlabel('country')
@@ -412,7 +449,7 @@ class DynamicStats(object):   #__version__== 0.0.5
         """
 
         r = requests.get(
-           f'https://cutt.ly/api/api.php?key={self.api_key}&stats=https://cutt.ly/{tx_id}')
+            f'https://cutt.ly/api/api.php?key={self.api_key}&stats=https://cutt.ly/{tx_id}')
         devices = json.loads(r.text)["stats"]["devices"]["dev"]
         print(json.loads(r.text)["stats"])
         kv_list = []
@@ -420,7 +457,7 @@ class DynamicStats(object):   #__version__== 0.0.5
         labels = list(devices['0'].keys())
         kv_list.append(labels)
 
-        for device in devices: 
+        for device in devices:
             v = (list(devices[device].values()))
             kv_list.append(v)
         return kv_list
