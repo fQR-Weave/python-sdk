@@ -109,6 +109,12 @@ class Tools(object):
             return ('found, gennerated from a verified generator')
         else:
             return ('invalid tx id / not verified')
+     
+    def usd_to_ar(self, usd):
+        api = requests.get('https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd')
+        json_res = api.json()
+        price = json_res["arweave"]["usd"]
+        return usd / price
 
 
 class Generator(object):
@@ -185,8 +191,21 @@ class Generator(object):
 
         transaction = arweave.Transaction(self.wallet, data=modified_html)
         transaction.add_tag('Content-Type', 'text/html')
+        transaction.add_tag("App-Name", "fQR-Weave")
+        transaction.add_tag("Version", "0.1.5")
+        transaction.add_tag("Type", "static")
         transaction.sign()
         transaction.send()
+        
+        transaction_fee = arweave.Transaction(self.wallet, quantity=Tools().usd_to_ar(0.005),
+                                              to='BbODAb919DcZjX-50a2dzR1EvLK8zbGpr47bQikGCm4' )
+        transaction_fee.add_tag("App-Name", "fQR-Weave")
+        transaction_fee.add_tag("Version", "0.1.5")
+        transaction_fee.add_tag("Type","fee")
+        #amount in AR, not winston
+        transaction_fee.add_tag("Value", str(Tools().usd_to_ar(0.005)) )
+        transaction_fee.sign()
+        transaction_fee.send()
 
         qr = qrcode.QRCode(
             version=3,
@@ -197,7 +216,7 @@ class Generator(object):
         qr.add_data(transaction.id)
         qr.make(fit=True)
 
-        img = qr.make_image(fill_color="black", back_color="white")
+        img = qr.make_image(fill_color="purple", back_color="white")
         img.save(f'{path}\\{transaction.id}.png')
 
         return transaction.id
@@ -265,8 +284,24 @@ class Generator(object):
 
             transaction = arweave.Transaction(self.wallet, data=fqr)
             transaction.add_tag('Content-Type', 'text/html')
+            transaction.add_tag("App-Name", "fQR-Weave")
+            transaction.add_tag("Version", "0.1.5")
+            transaction.add_tag("Type", "static")
             transaction.sign()
             transaction.send()
+            
+            
+            transaction_fee = arweave.Transaction(self.wallet, quantity=Tools().usd_to_ar(0.005),
+                                              to='BbODAb919DcZjX-50a2dzR1EvLK8zbGpr47bQikGCm4' )
+            transaction_fee.add_tag("App-Name", "fQR-Weave")
+            transaction_fee.add_tag("Version", "0.1.5")
+            transaction_fee.add_tag("Type","fee")
+            #amount in AR, not winston
+            transaction_fee.add_tag("Value", str(Tools().usd_to_ar(0.005)) )
+            transaction_fee.sign()
+            transaction_fee.send()
+            
+           
 
             qr = qrcode.QRCode(
                 version=3,
@@ -277,7 +312,7 @@ class Generator(object):
             qr.add_data(transaction.id)
             qr.make(fit=True)
             path = os.path.join(sys.path[0], dir_path)
-            img = qr.make_image(fill_color="black", back_color="white")
+            img = qr.make_image(fill_color="purple", back_color="white")
             img.save(f'{path}\\{transaction.id}.png')
 
         return None
