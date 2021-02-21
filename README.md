@@ -12,7 +12,7 @@ In your terminal: <br>
 <h2>Connect your wallet:</h2>
 
 
-```
+```python
   from fqrweaveSDK import Fqrweave, Tools
   
   jwk_path = '/path/to/your/file.json'
@@ -24,7 +24,7 @@ In your terminal: <br>
 <h2>Example:</h2>
 
 after importing the package and get connected:
-```
+```python
   generators_list = Tools().get_n_generators()
   print(generators_list)
 ```
@@ -61,7 +61,7 @@ On your end, add the repository files in a directory/folder according to the fol
 
 To publish your own package, you have to edit `setup.py` :
 
-```
+```python
   from distutils.core import setup
 
   setup(
